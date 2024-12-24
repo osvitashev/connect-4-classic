@@ -1,8 +1,8 @@
 package engine;
 
 public class GameState {
-	private static int NUM_COLUMNS = 7+2;
-	private static int NUM_ROWS = 6+2;
+	public static final int NUM_COLUMNS = 7+2;
+	public static final int NUM_ROWS = 6+2;
 	
 	//adds padding to the sides of the classic 7x6 game board.
 	private CellState [][] board = new CellState[NUM_COLUMNS][NUM_ROWS];
@@ -44,6 +44,15 @@ public class GameState {
         }
 	}
 	
+	
+	public CellState getAt(int col, int row) {
+		return board[col][row];
+	}
+	
+	public boolean isMoveValid(int column) {
+		return board[column][1+columnTokenCount[column]] == CellState.EMPTY;
+	}
+	
 	/**
 	 * Current player drops a token into the indicated column. Updates the game state.
 	 * @param column
@@ -51,7 +60,7 @@ public class GameState {
 	public void makeMove(int column) {
 		//todo: maybe this should check game win condition and return a flag for the current player?
 		assert column>0 && column<NUM_COLUMNS;
-		assert columnTokenCount[column]<NUM_ROWS-2;
+		assert isMoveValid(column);
 		assert board[column][1+columnTokenCount[column]] == CellState.EMPTY;
 		board[column][1+columnTokenCount[column]]=nextTokenType;
 		columnTokenCount[column]+=1;
@@ -207,7 +216,7 @@ public class GameState {
 		for(int c=1;c<NUM_COLUMNS-1;++c)
 			ret+=" "+columnTokenCount[c];
 		ret+="\n--------------\n";
-		for(int r=NUM_ROWS-1;r>0;--r) {
+		for(int r=NUM_ROWS-2;r>0;--r) {
 			for(int c=1;c<NUM_COLUMNS-1;++c)
 				if(board[c][r]==CellState.FIRST)
 					ret+=" X";
