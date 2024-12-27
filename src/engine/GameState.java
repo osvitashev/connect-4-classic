@@ -59,7 +59,7 @@ public class GameState {
 	 */
 	public void makeMove(int column) {
 		//todo: maybe this should check game win condition and return a flag for the current player?
-		assert column>0 && column<NUM_COLUMNS;
+		assert column>0 && column<NUM_COLUMNS : "column: "+ column;
 		assert isMoveValid(column);
 		assert board[column][1+columnTokenCount[column]] == CellState.EMPTY;
 		board[column][1+columnTokenCount[column]]=nextTokenType;
@@ -228,6 +228,25 @@ public class GameState {
 		}
 		ret+="--------------\n";
 		ret+= "Current Player: "+(nextTokenType==CellState.FIRST ? "first" : "second") + "\n";
+		return ret;
+	}
+	
+	public String toDisplayString() {
+		String ret="";
+		ret+="--------------\n";
+		for(int r=NUM_ROWS-2;r>0;--r) {
+			for(int c=1;c<NUM_COLUMNS-1;++c)
+				if(board[c][r]==CellState.FIRST)
+					ret+=" X";
+				else if(board[c][r]==CellState.SECOND)
+					ret+=" o";
+				else
+					ret+=" .";
+			ret+="\n";
+		}
+		ret+="--------------\n";
+		ret+="-1-2-3-4-5-6-7\n";
+		ret+= "Current Player: "+(nextTokenType==CellState.FIRST ? "X" : "o") + "\n";
 		return ret;
 	}
 }

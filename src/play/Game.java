@@ -19,7 +19,7 @@ public class Game {
 		Scanner scanner = new Scanner(System.in);
 		String input;
 		while(true) {
-			System.out.println(game.toString());
+			System.out.println(game.toDisplayString());
 			System.out.println("Enter your move [1..7]");
 			input=scanner.nextLine();
 			if(input.equals("exit"))
@@ -33,10 +33,10 @@ public class Game {
 				System.out.println(agent.getScoreByColumnReport());
 			}
 			else {
-				int col = Integer.valueOf(input);
+				int col = Integer.valueOf(input).intValue();
 				game.makeMove(col);
 				game.makeMove(agent.pickNextMove(game));
-				System.out.println(agent.getScoreByColumnReport());
+				
 			}
 			
 			
