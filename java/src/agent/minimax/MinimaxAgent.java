@@ -5,12 +5,12 @@ import java.util.Random;
 import engine.GameState;
 
 public class MinimaxAgent {
-	static final int MAX_SEARCH_DEPTH = 12;
+	static final int MAX_SEARCH_DEPTH = 9;
 
 	// for the purposes if a/b search, this is the positive and negative infinity.
 	static final int VICTORY_SCORE = 100;
 
-	static final int[] COLUMNS_IN_TRAVERSAL_ORDER = { 4, 3, 5, 1, 6, 1, 7 };// {1,2,3,4,5,6,7};
+	static final int[] COLUMNS_IN_TRAVERSAL_ORDER = {1,2,3,4,5,6,7};
 
 	// for tracing purposes only
 	private int[] scoreByColumn = new int[7 + 2];
@@ -93,8 +93,8 @@ public class MinimaxAgent {
 					score = -alphaBeta(g, -beta, -alpha, depth + 1);
 				g.unmakeMove(column);
 
-				if (score >= beta)
-					return beta; // fail hard beta-cutoff
+//				if (score >= beta)
+//					return beta; // fail hard beta-cutoff
 				if (score > alpha)
 					alpha = score; // alpha acts like max in MiniMax
 			}
