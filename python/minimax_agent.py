@@ -1,6 +1,6 @@
 from GameState import GameState
 class MinimaxAgent:
-    MAX_SEARCH_DEPTH = 7
+    MAX_SEARCH_DEPTH = 9
     VICTORY_SCORE = 50
     COLUMNS_IN_TRAVERSAL_ORDER = {1,2,3,4,5,6,7}
     
@@ -27,6 +27,15 @@ class MinimaxAgent:
                     score = -self.alphaBeta(g, -self.VICTORY_SCORE, self.VICTORY_SCORE, 2)
                 g.unmakeMove(column)
             self._scoreByColumn[column] = score
+    
+    def getBestMove(self):
+        bestScore = -self.VICTORY_SCORE
+        bestMove=-1
+        for c in range(1, GameState.NUM_COLUMNS - 1):
+            if self._scoreByColumn[c] > bestScore:
+                bestScore = self._scoreByColumn[c]
+                bestMove = c
+        return bestMove
     
     def alphaBeta(self, g, alpha, beta, depth):
         if depth >=self.MAX_SEARCH_DEPTH or g.isDraw():

@@ -73,7 +73,7 @@ public class GameState {
 	 */
 	public void unmakeMove(int column) {
 		assert column>0 && column<NUM_COLUMNS-1;
-		assert columnTokenCount[column]>0 && columnTokenCount[column]<NUM_ROWS-1;;
+		assert columnTokenCount[column]>0 && columnTokenCount[column]<NUM_ROWS-1;
 		assert board[column][columnTokenCount[column]] == CellState.FIRST || board[column][columnTokenCount[column]] == CellState.SECOND;
 		board[column][columnTokenCount[column]]=CellState.EMPTY;
 		columnTokenCount[column]-=1;
