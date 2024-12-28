@@ -38,13 +38,35 @@ Current Player: o""")
         game.setup("121212")
         
         game.makeMove(3)
-        self.assertEqual(game.is4Connected(3), False)
+        self.assertEqual(game.isVictory(), False)
         game.makeMove(4)
-        self.assertEqual(game.is4Connected(4), False)
-        
+        self.assertEqual(game.isVictory(), False)
         
         game.makeMove(1)
-        self.assertEqual(game.is4Connected(1), True)
+        self.assertEqual(game.isVictory(), True)
+        
+        self.assertEqual(game.toDisplayString(), """--------------
+ . . . . . . .
+ . . . . . . .
+ X . . . . . .
+ X o . . . . .
+ X o . . . . .
+ X o X o . . .
+--------------
+-1-2-3-4-5-6-7
+Current Player: o""")
+        game.unmakeMove(1)
+        self.assertEqual(game.isVictory(), False)
+        self.assertEqual(game.toDisplayString(), """--------------
+ . . . . . . .
+ . . . . . . .
+ . . . . . . .
+ X o . . . . .
+ X o . . . . .
+ X o X o . . .
+--------------
+-1-2-3-4-5-6-7
+Current Player: X""")
 
 
 if __name__ == "__main__":

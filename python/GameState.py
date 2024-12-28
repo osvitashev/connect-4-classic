@@ -19,24 +19,47 @@ class GameState:
         for r in range(0, GameState.NUM_ROWS):
             self._board[0][r] = CellState.INVALID
             self._board[GameState.NUM_COLUMNS - 1][r] = CellState.INVALID
+            
+    def isVictory(self):
+        return self._victoryFlag
+    
+    def isDraw(self):
+        return 42 == self._numTokensPlayed
     
     def setup(self, moveSeq):
         for c in [int(char) for char in moveSeq]:
             self.makeMove(c)
-            assert False == self.is4Connected(c)
+            assert False == self._is4Connected(c)
     
     def makeMove(self, column):
-        assert column > 0 and column < GameState.NUM_COLUMNS
+        assert column > 0 and column < GameState.NUM_COLUMNS-1
         assert self.isMoveValid(column)
         assert self._board[column][1 + self._columnTokenCount[column]] == CellState.EMPTY
+        assert self._victoryFlag == False
         self._board[column][1 + self._columnTokenCount[column]] = self._nextTokenType
         self._columnTokenCount[column] += 1
         if self._nextTokenType == CellState.FIRST:
             self._nextTokenType = CellState.SECOND
         else:
             self._nextTokenType = CellState.FIRST
+        self._numTokensPlayed+=1
+        self._victoryFlag = self._is4Connected(column)
+    
+    def unmakeMove(self, column):
+        assert column > 0 and column < GameState.NUM_COLUMNS-1
+        assert self._columnTokenCount[column]>0 and self._columnTokenCount[column]<GameState.NUM_ROWS-1
+        assert self._board[column][self._columnTokenCount[column]] == CellState.FIRST or self._board[column][self._columnTokenCount[column]] == CellState.SECOND
+        self._board[column][self._columnTokenCount[column]]=CellState.EMPTY;
+        self._columnTokenCount[column]-=1;
+        if self._nextTokenType == CellState.FIRST:
+            self._nextTokenType = CellState.SECOND
+        else:
+            self._nextTokenType = CellState.FIRST
+        self._numTokensPlayed-=1
+        self._victoryFlag = False
+
             
-    def is4Connected(self, last_updated_column):
+    def _is4Connected(self, last_updated_column):
         assert self._columnTokenCount[last_updated_column] > 0 and self._columnTokenCount[last_updated_column] < self.NUM_ROWS - 1
         last_updated_row = self._columnTokenCount[last_updated_column]
         correct_type = self._board[last_updated_column][last_updated_row]
@@ -154,6 +177,14 @@ class GameState:
         ret += "--------------\n";
         ret += "-1-2-3-4-5-6-7\n";
         ret += "Current Player: " + self._nextTokenType.value
+        return ret
+    
+    def toDebugString(self):
+        ret = "=================\n"
+        ret+= f"numTokensPlayed: {self._numTokensPlayed}\n"
+        ret+= f"columnTokenCount: {self._columnTokenCount}\n"
+        ret+= f"victoryFlag: {self._victoryFlag}\n"
+        ret+=self.toDisplayString()
         return ret
     
     def isMoveValid(self, column):
