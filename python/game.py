@@ -1,8 +1,8 @@
 from GameState import GameState
-from minimax_agent import MinimaxAgent
+from AgentV1 import BasicAlphaBetaAgent
 
 game = GameState()
-agent = MinimaxAgent()
+agent = BasicAlphaBetaAgent(9)
 
 print(game.toDebugString())
 
@@ -11,7 +11,7 @@ while True:
     if command == "quit" or command == "stop" or command == "exit":
         break
     elif command == "switchside":
-        game.makeMove(agent.getGoodMove(game))
+        game.makeMove(agent.evaluateAllAndGetBestMove(game))
         print(game.toDebugString())
         if game.isVictory():
             print("AI WINS! Try again...")
@@ -28,7 +28,7 @@ while True:
         elif game.isDraw():
             print("A draw... better luck next time.")
             break
-        game.makeMove(agent.getGoodMove(game))
+        game.makeMove(agent.evaluateAllAndGetBestMove(game))
         print(game.toDebugString())
         if game.isVictory():
             print("AI WINS! Try again...")

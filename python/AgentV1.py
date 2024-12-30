@@ -1,16 +1,20 @@
 from GameState import GameState
+from Agent import Agent
 
 
-class MinimaxAgent:
-    MAX_SEARCH_DEPTH = 9
+class BasicAlphaBetaAgent(Agent):
     _VICTORY_SCORE = 50
-    _COLUMNS_IN_TRAVERSAL_ORDER = {1, 2, 3, 4, 5, 6, 7}
+    _COLUMNS_IN_TRAVERSAL_ORDER = [4,3,5,2,6,1,7]#{1, 2, 3, 4, 5, 6, 7}
     
     # Constructor
     # def __init__(self):
     
-    
-    def getGoodMove(self, g):
+    def evaluateAllAndGetBestMove(self, g):
+        """
+        Does not do beta-cuts on the first iteration - this results in redundancy,
+        but gives exact score for every available move. Useful for testing.
+        """
+        self._nodeCount = 1
         assert not g.isVictory()
         assert not g.isDraw()
         scoreByColumn = [0] * GameState.NUM_COLUMNS
@@ -25,22 +29,23 @@ class MinimaxAgent:
                     score = -self._alphaBeta(g, -self._VICTORY_SCORE, self._VICTORY_SCORE, 2)
                 g.unmakeMove(column)
             scoreByColumn[column] = score
-        # TODO: port *good enough* selection logic from java.
         rep = ""
         for c in range(1, GameState.NUM_COLUMNS - 1):
             rep += f"{c}->{scoreByColumn[c]} "
-        print(f"Score by Column: {rep}")
+        # print(f"Score by Column: {rep}")
         bestScore = -self._VICTORY_SCORE
         bestMove = -1
-        for c in range(1, GameState.NUM_COLUMNS - 1):
+        for c in self._COLUMNS_IN_TRAVERSAL_ORDER:
             if scoreByColumn[c] > bestScore:
                 bestScore = scoreByColumn[c]
                 bestMove = c
-        print(f">>>>>>>>>>>AI's move: {bestMove}")
+        # print(f">>>>>>>>>>>AI's move: {bestMove}")
         return bestMove
     
     def _alphaBeta(self, g, alpha, beta, depth):
-        if depth >= self.MAX_SEARCH_DEPTH or g.isDraw():
+        if __debug__:
+            self._nodeCount += 1
+        if depth > self._searchDepth or g.isDraw():
             return 0
         score = 0
         for column in self._COLUMNS_IN_TRAVERSAL_ORDER:
