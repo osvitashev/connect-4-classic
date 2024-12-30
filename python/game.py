@@ -8,12 +8,10 @@ print(game.toDebugString())
 
 while True:
     command = input("Enter your move [1..7] >> ")
-    if command == "quit":
+    if command == "quit" or command == "stop" or command == "exit":
         break
     elif command == "switchside":
-        agent.scoreLegalMoves(game)
-        game.makeMove(agent.getBestMove())
-        print(agent.getScoreReport())
+        game.makeMove(agent.getGoodMove(game))
         print(game.toDebugString())
         if game.isVictory():
             print("AI WINS! Try again...")
@@ -24,16 +22,13 @@ while True:
     else:
         game.makeMove(int(command))
         print(game.toDebugString())
-        print(game.toDebugString())
         if game.isVictory():
             print("WELL DONE!")
             break
         elif game.isDraw():
             print("A draw... better luck next time.")
             break
-        agent.scoreLegalMoves(game)
-        print(agent.getScoreReport())
-        game.makeMove(agent.getBestMove())
+        game.makeMove(agent.getGoodMove(game))
         print(game.toDebugString())
         if game.isVictory():
             print("AI WINS! Try again...")
