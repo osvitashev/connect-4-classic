@@ -6,7 +6,7 @@ from AgentV1 import BasicAlphaBetaAgent
 def playGame(agent1, agent2):
     global wins, draws, losses, game, challenger, defender
     while True:
-        game.makeMove(agent1.evaluateAllAndGetBestMove(game))
+        game.makeMove(agent1.getBestMove(game))
         if game.isDraw():
             draws+=1
             break
@@ -16,7 +16,7 @@ def playGame(agent1, agent2):
         elif game.isVictory() and  agent1 == defender:
             losses +=1
             break
-        game.makeMove(agent2.evaluateAllAndGetBestMove(game))
+        game.makeMove(agent2.getBestMove(game))
         if game.isDraw():
             draws+=1
             break
@@ -33,8 +33,8 @@ wins = 0
 draws = 0
 losses =0
 
-challenger = BasicAlphaBetaAgent(6)
-defender = BasicAlphaBetaAgent(4)
+challenger = BasicAlphaBetaAgent(8)
+defender = BasicAlphaBetaAgent(6)
 
 
 
@@ -56,5 +56,5 @@ for m1 in [1,2,3,4,5,6,7]:
 
 
 print(f"Report>>> wins:{wins}, draws:{draws}, losses:{losses}")
-
+print(f"Advantage: {(wins-losses)/(wins+losses):.2f}")
 
