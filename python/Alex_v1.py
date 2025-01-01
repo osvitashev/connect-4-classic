@@ -214,7 +214,6 @@ class Agent:
     
     def __init__(self):
         self._searchDepth = 0
-        self._timeAllowed_ms = 0
         self._reset()
     
     def setSearchDepth(self, sd):
@@ -231,22 +230,7 @@ class Agent:
         if g.isVictory() or g.isDraw():
             raise ValueError("Game cannot be continued")
         start = time.perf_counter()
-        
-        score = 0
-        bestMove = -1
-        alpha = -self._VICTORY_SCORE
-        beta = self._VICTORY_SCORE
-        for column in self._COLUMNS_IN_TRAVERSAL_ORDER:
-            if g.isMoveValid(column):
-                g.makeMove(column)
-                if g.isVictory():
-                    score = self._VICTORY_SCORE - 1
-                else:
-                    score = -self._alphaBeta(g, -beta, -alpha, 2)
-                g.unmakeMove(column)
-                if score > alpha:
-                    alpha = score
-                    bestMove = column
+        score, bestMove = self._alphaBeta(g, -self._VICTORY_SCORE, self._VICTORY_SCORE, 1)
         end = time.perf_counter()
         print(f"Search depth: {self._searchDepth}. Execution time: {end - start:.3f} seconds. Node count: {agent.getNodeCount()} nodes. Speed: {(0.001*agent.getNodeCount()/(end - start)):.1f}k nodes per second. Effective Branching Factor: {calculate_ebf(self.getNodeCount(), self._searchDepth):.3f}.")
         print(f"Best Move = {bestMove}")
@@ -255,8 +239,9 @@ class Agent:
     
     def _alphaBeta(self, g, alpha, beta, depth):
         if depth > self._searchDepth or g.isDraw():
-            return 0
-        score = 0
+            return 0, None
+        score = None
+        bestMove = None
         for column in self._COLUMNS_IN_TRAVERSAL_ORDER:
             if g.isMoveValid(column):
                 g.makeMove(column)
@@ -264,19 +249,22 @@ class Agent:
                 if g.isVictory():
                     score = self._VICTORY_SCORE - depth
                 else:
-                    score = -self._alphaBeta(g, -beta, -alpha, depth + 1)
+                    score, move = self._alphaBeta(g, -beta, -alpha, depth + 1)
+                    score = -score
                 g.unmakeMove(column)
                 if score >= beta:
-                    return beta
+                    return beta, None
                 if score > alpha:
                     alpha = score
-        return alpha
+                    bestMove = column
+        return alpha, bestMove
 
 game = GameState()
 agent = Agent()
-agent.setSearchDepth(11)
+agent.setSearchDepth(9)
 
 print(game.toDisplayString())
+print("You can use 'switchside' command to force the AI to make the first move.")
 
 while True:
     command = input("Enter your move [1..7] >> ")
