@@ -7,7 +7,11 @@ class GameState:
 
     # Constructor
     def __init__(self):
-        self._board = [[CellState.EMPTY for _ in range(GameState.NUM_ROWS)] for _ in range(GameState.NUM_COLUMNS)]
+        # self._board = [[CellState.EMPTY for _ in range(GameState.NUM_ROWS)] for _ in range(GameState.NUM_COLUMNS)]
+        
+        self._firstPlayerTokens = 0
+        self._secondPlayerTokens = 0
+        
         self._columnTokenCount = [0] * GameState.NUM_COLUMNS
         # # AKA the current player
         self._nextTokenType = CellState.FIRST
@@ -16,15 +20,31 @@ class GameState:
         for c in range(0, GameState.NUM_COLUMNS):
             self._setCellValue(c,0, CellState.INVALID)
             self._setCellValue(c,GameState.NUM_ROWS - 1, CellState.INVALID)
-        for r in range(0, GameState.NUM_ROWS):
-            self._setCellValue(0,r, CellState.INVALID)
-            self._setCellValue(GameState.NUM_COLUMNS - 1,r, CellState.INVALID)
+            
+    def _getBitIndex(self, c, r):
+        return c+GameState.NUM_COLUMNS*r
     
     def _getCellValue(self, c, r):
+        if c == 0 or c == GameState.NUM_COLUMNS-1 or r == 0 or r == GameState.NUM_ROWS-1:
+            return CellState.INVALID
+        elif 0 != self._firstPlayerTokens & (1 << self._getBitIndex(c, r)):
+            return CellState.FIRST
+        elif 0 != self._secondPlayerTokens & (1 << self._getBitIndex(c, r)):
+            return CellState.SECOND
+        else:
+            return CellState.EMPTY
+        
         return self._board[c][r]
     
     def _setCellValue(self, c, r, value):
-        self._board[c][r] = value
+        if value == CellState.FIRST:
+            self._firstPlayerTokens = self._firstPlayerTokens | (1 << self._getBitIndex(c, r))
+        else:
+            self._secondPlayerTokens = self._secondPlayerTokens | (1 << self._getBitIndex(c, r))
+    
+    def _clearCellValue(self, c, r):
+        self._firstPlayerTokens = self._firstPlayerTokens & ~(1 << self._getBitIndex(c, r))
+        self._secondPlayerTokens = self._secondPlayerTokens & ~(1 << self._getBitIndex(c, r))
             
     def isVictory(self):
         return self._victoryFlag
@@ -57,7 +77,7 @@ class GameState:
             assert column > 0 and column < GameState.NUM_COLUMNS - 1
             assert self._columnTokenCount[column] > 0 and self._columnTokenCount[column] < GameState.NUM_ROWS - 1
             assert self._getCellValue(column, self._columnTokenCount[column]) == CellState.FIRST or self._getCellValue(column, self._columnTokenCount[column]) == CellState.SECOND
-        self._setCellValue(column, self._columnTokenCount[column], CellState.EMPTY)
+        self._clearCellValue(column, self._columnTokenCount[column])
         self._columnTokenCount[column] -= 1;
         if self._nextTokenType == CellState.FIRST:
             self._nextTokenType = CellState.SECOND
