@@ -1,5 +1,5 @@
 from GameState import GameState
-from AgentV1 import BasicAlphaBetaAgent
+from BasicAlphaBetaAgent import BasicAlphaBetaAgent
 import time
 
 game = GameState()

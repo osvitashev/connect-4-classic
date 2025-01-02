@@ -1,5 +1,5 @@
 from GameState import GameState
-from AgentV1 import BasicAlphaBetaAgent
+from BasicAlphaBetaAgent import BasicAlphaBetaAgent
 
 
 
@@ -33,8 +33,10 @@ wins = 0
 draws = 0
 losses =0
 
-challenger = BasicAlphaBetaAgent(8)
-defender = BasicAlphaBetaAgent(6)
+challenger = BasicAlphaBetaAgent()
+challenger.setSearchDepth(8)
+defender = BasicAlphaBetaAgent()
+defender.setSearchDepth(6)
 
 
 

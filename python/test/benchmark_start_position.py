@@ -1,5 +1,5 @@
 from GameState import GameState
-from AgentV1 import BasicAlphaBetaAgent
+from BasicAlphaBetaAgent import BasicAlphaBetaAgent
 import time
 
 def calculate_ebf(total_nodes, depth, tolerance=1e-6):
@@ -20,7 +20,8 @@ def calculate_ebf(total_nodes, depth, tolerance=1e-6):
 depth = 12
 
 game = GameState()
-agent = BasicAlphaBetaAgent(depth)
+agent = BasicAlphaBetaAgent()
+agent.setSearchDepth(depth)
 
 start = time.perf_counter()
 if -1 == agent.getBestMove(game):

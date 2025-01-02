@@ -1,5 +1,6 @@
 from GameState import GameState
 from Agent import Agent
+from pip._vendor.pyparsing import col
 
 
 class BasicAlphaBetaAgent(Agent):
@@ -12,8 +13,9 @@ class BasicAlphaBetaAgent(Agent):
     
     def _alphaBeta(self, g, alpha, beta, depth):
         if depth > self._searchDepth or g.isDraw():
-            return 0
-        score = 0
+            return 0, None
+        score = None
+        bestMove = None
         for column in self._COLUMNS_IN_TRAVERSAL_ORDER:
             if g.isMoveValid(column):
                 g.makeMove(column)
@@ -21,11 +23,13 @@ class BasicAlphaBetaAgent(Agent):
                 if g.isVictory():
                     score = self._VICTORY_SCORE - depth
                 else:
-                    score = -self._alphaBeta(g, -beta, -alpha, depth + 1)
+                    score, move = self._alphaBeta(g, -beta, -alpha, depth + 1)
+                    score = -score
                 g.unmakeMove(column)
                 if score >= beta:
-                    return beta
+                    return beta, None
                 if score > alpha:
                     alpha = score
-        return alpha
+                    bestMove = column
+        return alpha, bestMove
 

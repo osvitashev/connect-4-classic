@@ -162,6 +162,8 @@ class GameState:
                 num_in_sequence += 1
             else:
                 break
+        if num_in_sequence >= 3:  # not counting the starting point.
+            return True
         
         num_in_sequence = 0
         # other diagonal
