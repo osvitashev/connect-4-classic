@@ -14,11 +14,17 @@ class GameState:
         self._numTokensPlayed = 0
         self._victoryFlag = False
         for c in range(0, GameState.NUM_COLUMNS):
-            self._board[c][0] = CellState.INVALID
-            self._board[c][GameState.NUM_ROWS - 1] = CellState.INVALID
+            self._setCellValue(c,0, CellState.INVALID)
+            self._setCellValue(c,GameState.NUM_ROWS - 1, CellState.INVALID)
         for r in range(0, GameState.NUM_ROWS):
-            self._board[0][r] = CellState.INVALID
-            self._board[GameState.NUM_COLUMNS - 1][r] = CellState.INVALID
+            self._setCellValue(0,r, CellState.INVALID)
+            self._setCellValue(GameState.NUM_COLUMNS - 1,r, CellState.INVALID)
+    
+    def _getCellValue(self, c, r):
+        return self._board[c][r]
+    
+    def _setCellValue(self, c, r, value):
+        self._board[c][r] = value
             
     def isVictory(self):
         return self._victoryFlag
@@ -35,9 +41,9 @@ class GameState:
         if __debug__:
             assert column > 0 and column < GameState.NUM_COLUMNS - 1
             assert self.isMoveValid(column)
-            assert self._board[column][1 + self._columnTokenCount[column]] == CellState.EMPTY
+            assert self._getCellValue(column, 1 + self._columnTokenCount[column]) == CellState.EMPTY
             assert self._victoryFlag == False
-        self._board[column][1 + self._columnTokenCount[column]] = self._nextTokenType
+        self._setCellValue(column, 1 + self._columnTokenCount[column], self._nextTokenType)
         self._columnTokenCount[column] += 1
         if self._nextTokenType == CellState.FIRST:
             self._nextTokenType = CellState.SECOND
@@ -50,8 +56,8 @@ class GameState:
         if __debug__:
             assert column > 0 and column < GameState.NUM_COLUMNS - 1
             assert self._columnTokenCount[column] > 0 and self._columnTokenCount[column] < GameState.NUM_ROWS - 1
-            assert self._board[column][self._columnTokenCount[column]] == CellState.FIRST or self._board[column][self._columnTokenCount[column]] == CellState.SECOND
-        self._board[column][self._columnTokenCount[column]] = CellState.EMPTY;
+            assert self._getCellValue(column, self._columnTokenCount[column]) == CellState.FIRST or self._getCellValue(column, self._columnTokenCount[column]) == CellState.SECOND
+        self._setCellValue(column, self._columnTokenCount[column], CellState.EMPTY)
         self._columnTokenCount[column] -= 1;
         if self._nextTokenType == CellState.FIRST:
             self._nextTokenType = CellState.SECOND
@@ -64,9 +70,9 @@ class GameState:
         if __debug__:
             assert self._columnTokenCount[last_updated_column] > 0 and self._columnTokenCount[last_updated_column] < self.NUM_ROWS - 1
         last_updated_row = self._columnTokenCount[last_updated_column]
-        correct_type = self._board[last_updated_column][last_updated_row]
+        correct_type = self._getCellValue(last_updated_column,last_updated_row)
         if __debug__:
-            assert correct_type == CellState.FIRST or correct_type == CellState.SECOND;
+            assert correct_type == CellState.FIRST or correct_type == CellState.SECOND
         
         num_in_sequence = 0
 # horizontal
@@ -74,7 +80,7 @@ class GameState:
         r = last_updated_row
         while True:
             r -= 1
-            current = self._board[c][r]
+            current = self._getCellValue(c,r)
             if current == correct_type:
                 num_in_sequence += 1
             else:
@@ -84,7 +90,7 @@ class GameState:
         r = last_updated_row
         while True:
             r += 1
-            current = self._board[c][r]
+            current = self._getCellValue(c,r)
             if current == correct_type:
                 num_in_sequence += 1
             else:
@@ -99,7 +105,7 @@ class GameState:
         r = last_updated_row
         while True:
             c -= 1
-            current = self._board[c][r]
+            current = self._getCellValue(c,r)
             if current == correct_type:
                 num_in_sequence += 1
             else:
@@ -109,7 +115,7 @@ class GameState:
         r = last_updated_row
         while True:
             c += 1
-            current = self._board[c][r]
+            current = self._getCellValue(c,r)
             if current == correct_type:
                 num_in_sequence += 1
             else:
@@ -125,7 +131,7 @@ class GameState:
         while True:
             c -= 1
             r -= 1
-            current = self._board[c][r]
+            current = self._getCellValue(c,r)
             if current == correct_type:
                 num_in_sequence += 1
             else:
@@ -136,7 +142,7 @@ class GameState:
         while True:
             c += 1
             r += 1
-            current = self._board[c][r]
+            current = self._getCellValue(c,r)
             if current == correct_type:
                 num_in_sequence += 1
             else:
@@ -151,7 +157,7 @@ class GameState:
         while True:
             c -= 1
             r += 1
-            current = self._board[c][r]
+            current = self._getCellValue(c,r)
             if current == correct_type:
                 num_in_sequence += 1
             else:
@@ -162,7 +168,7 @@ class GameState:
         while True:
             c += 1
             r -= 1
-            current = self._board[c][r]
+            current = self._getCellValue(c,r)
             if current == correct_type:
                 num_in_sequence += 1
             else:
@@ -177,7 +183,7 @@ class GameState:
         ret += "--------------\n";
         for r in reversed(range(1, GameState.NUM_ROWS - 1)):
             for c in range(1, GameState.NUM_COLUMNS - 1):
-                ret += " " + self._board[c][r].value
+                ret += " " + self._getCellValue(c,r).value
             ret += "\n"
         ret += "--------------\n";
         ret += "-1-2-3-4-5-6-7\n";
@@ -195,4 +201,4 @@ class GameState:
     def isMoveValid(self, column):
         if __debug__:
             assert column >= 1 and column < GameState.NUM_COLUMNS - 1
-        return self._board[column][1 + self._columnTokenCount[column]] == CellState.EMPTY
+        return self._getCellValue(column,1 + self._columnTokenCount[column]) == CellState.EMPTY

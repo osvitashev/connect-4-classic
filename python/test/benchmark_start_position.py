@@ -29,3 +29,25 @@ if -1 == agent.getBestMove(game):
 end = time.perf_counter()
 
 print(f"Startpos search depth: {depth}. Execution time: {end - start:.6f} seconds. Node count: {agent.getNodeCount()} nodes. Speed: {(0.001*agent.getNodeCount()/(end - start)):.1f}k nodes per second. Effective Branching Factor: {calculate_ebf(agent.getNodeCount(), depth):.3f}.")
+
+game = GameState()
+agent = BasicAlphaBetaAgent()
+agent.setSearchDepth(depth)
+
+start = time.perf_counter()
+if -1 == agent.getBestMove(game):
+    print("foobar")
+end = time.perf_counter()
+
+print(f"Startpos search depth: {depth}. Execution time: {end - start:.6f} seconds. Node count: {agent.getNodeCount()} nodes. Speed: {(0.001*agent.getNodeCount()/(end - start)):.1f}k nodes per second. Effective Branching Factor: {calculate_ebf(agent.getNodeCount(), depth):.3f}.")
+
+game = GameState()
+agent = BasicAlphaBetaAgent()
+agent.setSearchDepth(depth)
+
+start = time.perf_counter()
+if -1 == agent.getBestMove(game):
+    print("foobar")
+end = time.perf_counter()
+
+print(f"Startpos search depth: {depth}. Execution time: {end - start:.6f} seconds. Node count: {agent.getNodeCount()} nodes. Speed: {(0.001*agent.getNodeCount()/(end - start)):.1f}k nodes per second. Effective Branching Factor: {calculate_ebf(agent.getNodeCount(), depth):.3f}.")
