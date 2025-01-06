@@ -1,6 +1,7 @@
 from GameState import GameState
 from BasicAlphaBetaAgent import BasicAlphaBetaAgent
 import time
+from EvalAlphaBetaAgent import EvalAlphaBetaAgent
 
 def calculate_ebf(total_nodes, depth, tolerance=1e-6):
     if depth <= 0:
@@ -22,11 +23,10 @@ def getNextAIMove(g, a):
     move = a.getBestMove(g)
     end = time.perf_counter()
     print(f"Depth: {a.getSearchDepth()}. Execution time: {end - start:.3f} seconds. Node count: {a.getNodeCount()} nodes. Speed: {(0.001*a.getNodeCount()/(end - start)):.1f}k nodes per second. Effective Branching Factor: {calculate_ebf(a.getNodeCount(), a.getSearchDepth()):.3f}.")
-    print(f"Best Move = {move}")
     return move
 
 game = GameState()
-agent = BasicAlphaBetaAgent()
+agent = EvalAlphaBetaAgent()
 agent.setSearchDepth(11)
 
 print(game.toDebugString())

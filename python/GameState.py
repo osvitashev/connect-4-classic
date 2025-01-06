@@ -1,35 +1,45 @@
 from CellState import CellState
 
-
 class GameState:
     NUM_COLUMNS = 7 + 2
     NUM_ROWS = 6 + 2
 
     # Constructor
-    def __init__(self):
-        # self._board = [[CellState.EMPTY for _ in range(GameState.NUM_ROWS)] for _ in range(GameState.NUM_COLUMNS)]
-        
+    def __init__(self):        
         self._firstPlayerTokens = 0
         self._secondPlayerTokens = 0
+        """
+        list of (col, row) pairs
+        """
+        self._game_history = []
         
         self._columnTokenCount = [0] * GameState.NUM_COLUMNS
         # # AKA the current player
         self._nextTokenType = CellState.FIRST
         self._numTokensPlayed = 0
         self._victoryFlag = False
-        for c in range(0, GameState.NUM_COLUMNS):
-            self._setCellValue(c,0, CellState.INVALID)
-            self._setCellValue(c,GameState.NUM_ROWS - 1, CellState.INVALID)
+    
+    def getLastUpdatedCellCoordinates(self):
+        """
+        returns pair (col, row)
+        """
+        return self._game_history[-1]
+    
+    def getFirstPlayerTokens(self):
+        return self._firstPlayerTokens
+    
+    def getSecondPlayerTokens(self):
+        return self._secondPlayerTokens
             
-    def _getBitIndex(self, c, r):
+    def getBitIndex(c, r):
         return c+GameState.NUM_COLUMNS*r
     
     def _getCellValue(self, c, r):
         if c == 0 or c == GameState.NUM_COLUMNS-1 or r == 0 or r == GameState.NUM_ROWS-1:
             return CellState.INVALID
-        elif 0 != self._firstPlayerTokens & (1 << self._getBitIndex(c, r)):
+        elif 0 != self._firstPlayerTokens & (1 << GameState.getBitIndex(c, r)):
             return CellState.FIRST
-        elif 0 != self._secondPlayerTokens & (1 << self._getBitIndex(c, r)):
+        elif 0 != self._secondPlayerTokens & (1 << GameState.getBitIndex(c, r)):
             return CellState.SECOND
         else:
             return CellState.EMPTY
@@ -38,13 +48,13 @@ class GameState:
     
     def _setCellValue(self, c, r, value):
         if value == CellState.FIRST:
-            self._firstPlayerTokens = self._firstPlayerTokens | (1 << self._getBitIndex(c, r))
+            self._firstPlayerTokens = self._firstPlayerTokens | (1 << GameState.getBitIndex(c, r))
         else:
-            self._secondPlayerTokens = self._secondPlayerTokens | (1 << self._getBitIndex(c, r))
+            self._secondPlayerTokens = self._secondPlayerTokens | (1 << GameState.getBitIndex(c, r))
     
     def _clearCellValue(self, c, r):
-        self._firstPlayerTokens = self._firstPlayerTokens & ~(1 << self._getBitIndex(c, r))
-        self._secondPlayerTokens = self._secondPlayerTokens & ~(1 << self._getBitIndex(c, r))
+        self._firstPlayerTokens = self._firstPlayerTokens & ~(1 << GameState.getBitIndex(c, r))
+        self._secondPlayerTokens = self._secondPlayerTokens & ~(1 << GameState.getBitIndex(c, r))
             
     def isVictory(self):
         return self._victoryFlag
@@ -71,6 +81,7 @@ class GameState:
             self._nextTokenType = CellState.FIRST
         self._numTokensPlayed += 1
         self._victoryFlag = self._is4Connected(column)
+        self._game_history.append((column, self._columnTokenCount[column]))
     
     def unmakeMove(self, column):
         if __debug__:
@@ -85,6 +96,7 @@ class GameState:
             self._nextTokenType = CellState.FIRST
         self._numTokensPlayed -= 1
         self._victoryFlag = False
+        self._game_history.pop()
             
     def _is4Connected(self, last_updated_column):
         if __debug__:
@@ -198,8 +210,14 @@ class GameState:
             return True
         return False
     
+    def getMoveHistoryString(self):
+        return ''.join(str(pair[0]) for pair in self._game_history)
+    
     def toDisplayString(self):
         ret = ""
+        ret += "gameHist: "
+        ret += ''.join(str(pair[0]) for pair in self._game_history)
+        ret += "\n"
         ret += "--------------\n";
         for r in reversed(range(1, GameState.NUM_ROWS - 1)):
             for c in range(1, GameState.NUM_COLUMNS - 1):

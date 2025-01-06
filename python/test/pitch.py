@@ -1,5 +1,6 @@
 from GameState import GameState
 from BasicAlphaBetaAgent import BasicAlphaBetaAgent
+from EvalAlphaBetaAgent import EvalAlphaBetaAgent
 
 
 
@@ -33,8 +34,8 @@ wins = 0
 draws = 0
 losses =0
 
-challenger = BasicAlphaBetaAgent()
-challenger.setSearchDepth(8)
+challenger = EvalAlphaBetaAgent()
+challenger.setSearchDepth(6)
 defender = BasicAlphaBetaAgent()
 defender.setSearchDepth(6)
 
@@ -47,14 +48,19 @@ for m1 in [1,2,3,4,5,6,7]:
             game.makeMove(m1)
             game.makeMove(m2)
             game.makeMove(m3)
+            rep = "Report>>> start:" + game.getMoveHistoryString() + ", "
             playGame(challenger, defender)
-            print(f"Report>>> wins:{wins}, draws:{draws}, losses:{losses}")
+            rep += "end: "+ game.getMoveHistoryString() + ", "
+            print(rep+ f"wins:{wins}, draws:{draws}, losses:{losses}")
             game=GameState()
             game.makeMove(m1)
             game.makeMove(m2)
             game.makeMove(m3)
+            rep = "Report>>> start:" + game.getMoveHistoryString() + ", "
             playGame(defender, challenger)
-            print(f"Report>>> wins:{wins}, draws:{draws}, losses:{losses}")
+            rep += "end: "+ game.getMoveHistoryString() + ", "
+            print(rep+ f"wins:{wins}, draws:{draws}, losses:{losses}")
+            # assert wins == losses # needed when testing to make sure changes only affecting performance.
 
 
 print(f"Report>>> wins:{wins}, draws:{draws}, losses:{losses}")
